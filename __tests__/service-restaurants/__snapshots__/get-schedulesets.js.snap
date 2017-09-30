@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Handler filters the schedules according to the query parameters 1`] = `undefined`;
+
+exports[`Handler finds all the scheduleSets that match the query parameters and the according schedules 1`] = `undefined`;
+
+exports[`Handler forwards the error if one gets thrown during the deletion 1`] = `undefined`;

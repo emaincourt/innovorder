@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Handler creates a restaurant if timing conditions are satisfied 1`] = `undefined`;
+
+exports[`Handler forwards the error if one gets thrown during the insertion 1`] = `[Error: Internal Server Error]`;
+
+exports[`Handler forwards the error if one gets thrown during the insertion 2`] = `undefined`;

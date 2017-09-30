@@ -8,7 +8,8 @@
   "scripts": {
     "start": "babel index.js -d dist && babel services -d dist/services && cp -r sequelize dist/ && node dist/index.js",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",

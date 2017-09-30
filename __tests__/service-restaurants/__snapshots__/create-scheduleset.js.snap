@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Handler creates a restaurant if timing conditions are satisfied 1`] = `undefined`;
+
+exports[`Handler doesn't allow a minus start value 1`] = `undefined`;
+
+exports[`Handler doesn't allow an end value that is over the duration of one entire day 1`] = `undefined`;
+
+exports[`Handler doesn't allow start and end time that are not multiplicators of 15 1`] = `undefined`;

@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Handler finds all the restaurants that match the query parameters 1`] = `undefined`;
+
+exports[`Handler forwards the error if one gets thrown during the deletion 1`] = `undefined`;
