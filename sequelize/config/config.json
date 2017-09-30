@@ -1,0 +1,22 @@
+{
+  "development": {
+    "username": "bfwrbinvnithpt",
+    "password": "1c3474b00f6a702e833cd2cc588e7b0b90fe08723180beab9adf25030fc0515a",
+    "database": "d2cj2errgmqnhh",
+    "host": "ec2-54-75-228-125.eu-west-1.compute.amazonaws.com",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": true
+    }
+  },
+  "test": {
+    "username": null,
+    "password": null,
+    "database": null,
+    "host": null,
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": true
+    }
+  }
+}
