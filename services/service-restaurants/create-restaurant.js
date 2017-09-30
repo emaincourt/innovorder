@@ -16,14 +16,6 @@ export default {
   },
   handler: async ({ payload }, reply) => {
     try {
-      if (
-        payload.preparationDelay % 15 !== 0
-        || payload.rushDelay % 15 !== 0
-      ) {
-        return reply(
-          Boom.badData('Preparation and rush delays must be multiplicators of 15.'),
-        ).code(422);
-      }
       const inserted = await Restaurant.create({
         ...payload,
       });
