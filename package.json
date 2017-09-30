@@ -6,12 +6,13 @@
   "author": "e.maincourt@gmail.com",
   "license": "MIT",
   "scripts": {
-    "start": "babel index.js -d dist && babel services -d dist/services && cp -r sequelize dist/ && node dist/index.js",
+    "start": "./node_modules/.bin/babel index.js -d dist && ./node_modules/.bin/babel services -d dist/services && cp -r sequelize dist/ && node dist/index.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.25.0",
     "babel-eslint": "^7.2.3",
     "babel-jest": "^20.0.3",
