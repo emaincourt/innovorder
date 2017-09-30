@@ -10,7 +10,7 @@ import updateSchedule from './services/service-restaurants/update-schedule';
 const server = new Server();
 
 server.connection({
-  port: 3000,
+  port: process.env.PORT || 3000,
   host: 'localhost',
 });
 
