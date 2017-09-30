@@ -2,10 +2,13 @@
   "name": "innovorder-developer-test",
   "version": "1.0.0",
   "description": "Innovorder Developer Test",
-  "main": "index.js",
+  "main": "dist",
   "author": "e.maincourt@gmail.com",
   "license": "MIT",
   "scripts": {
+    "start": "babel index.js -d dist && babel services -d dist/services && cp -r sequelize dist/ && node dist/index.js",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
