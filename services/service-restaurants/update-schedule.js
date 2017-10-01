@@ -17,7 +17,7 @@ export default {
   },
   handler: async ({ params, payload }, reply) => {
     try {
-      if (payload.from % 15 !== 0 || payload.to % 15 !== 0) {
+      if (payload.start % 15 !== 0 || payload.end % 15 !== 0) {
         throw Boom.badData('Intervals must be multiplicators of 15.');
       }
       const schedule = await Schedule.findById(params.scheduleId);
