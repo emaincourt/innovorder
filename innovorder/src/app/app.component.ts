@@ -1,37 +1,12 @@
-import {
-  ChangeDetectionStrategy,
-  ViewChild,
-  TemplateRef,
-  Component,
-} from '@angular/core';
-import {
-  startOfDay,
-  endOfDay,
-  subDays,
-  addDays,
-  endOfMonth,
-  isSameDay,
-  isSameMonth,
-  addHours,
-  startOfWeek,
-  addMinutes,
-  format,
-  closestIndexTo,
-  isBefore,
-} from 'date-fns';
-import {
-  CalendarEvent,
-  CalendarEventAction,
-  CalendarEventTimesChangedEvent
-} from 'angular-calendar';
-import {
-  RestaurantsService,
-} from './restaurants.service';
+import { ChangeDetectionStrategy, ViewChild, TemplateRef, Component } from '@angular/core';
+import { addDays, isSameDay, startOfWeek, addMinutes, format, closestIndexTo, isBefore, getMinutes, getSeconds } from 'date-fns';
+import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent } from 'angular-calendar';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/takeWhile'
-import { flow } from 'lodash';
+import { flow, pullAt } from 'lodash';
+import { RestaurantsService, } from './restaurants.service';
 
 const colors: any = {
   pink: {
@@ -107,9 +82,81 @@ export class AppComponent {
     }
   ];
 
-  setCurrentSchedule(event: CalendarEvent): void {
-    this.currentSchedule = this.restaurant.scheduleSet.schedules.find(schedule => schedule.id === event['id']);
+  roundToQuarter(date) {
+    if (getMinutes(date) % 15 === 0) {
+      return addMinutes(date, 15);
+    }
+    while(
+      getMinutes(date) % 15 !== 0
+    ) {
+      date = addMinutes(date, 1);
+    }
+    return date;
   }
+
+  getClosestInterval() {
+    const minDelay = this.restaurant.rushDelay + this.restaurant.preparationDelay;
+    const closestIndex = closestIndexTo(
+      new Date(),
+      this.events.map(event => event.start),
+    );
+    if (
+      isSameDay(this.events[closestIndex].start, new Date())
+      && isBefore(
+        this.roundToQuarter(
+          addMinutes(new Date(), minDelay)
+        ),
+        this.events[closestIndex].end,
+      )
+    ) {
+        return this.events[closestIndex];
+    }
+    if (
+      !isSameDay(this.events[closestIndex].start, new Date())
+      && isBefore(
+        this.roundToQuarter(
+          addMinutes(this.events[closestIndex].start, minDelay),
+        ),
+        this.events[closestIndex].end,
+      )
+    ) {
+        return this.events[closestIndex];
+    }
+    return this.events[
+      closestIndexTo(
+        new Date(),
+        pullAt(this.events, closestIndex).map(event => event.start),
+      )
+    ];
+  }
+
+  getOrderingTime() {
+    const minDelay = this.restaurant.rushDelay + this.restaurant.preparationDelay;
+    const closestInterval = this.getClosestInterval();
+    const startTime = 
+      isSameDay(new Date(), closestInterval.start)
+      && isBefore(closestInterval.start, new Date()) ? new Date() : closestInterval.start;
+    return flow(
+      date => addMinutes(date, minDelay),
+      date => this.roundToQuarter(date),
+      date => format(date, 'ddd HH:mm'),
+      str => this.nextOrderingTime = str,
+      () => Observable.interval(1000)
+        .takeWhile(() => true)
+        .subscribe(() => { 
+          this.getOrderingTime()
+        })
+    )(startTime);
+  }
+
+  setCurrentSchedule(event: CalendarEvent): void {
+    this.currentSchedule = this
+      .restaurant
+      .scheduleSet
+      .schedules
+      .find(schedule => schedule.id === event['id']);
+  }
+
   createSchedule(): void {
     this.newSchedule = new Schedule({
       day: 'MON',
@@ -118,27 +165,40 @@ export class AppComponent {
       id: null,
     });
   }
-  saveCurrentSchedule(): void {
-    this.restaurantsService.saveCurrentSchedule(this.restaurant.id, this.restaurant.scheduleSet.id, this.currentSchedule)
-    .then(() => this.currentSchedule = null)
-    .then(() => this.restaurantsService.getScheduleSet(this.restaurant.id, this.restaurant.scheduleSetId))
-    .then(scheduleSet => this.restaurant.scheduleSet = scheduleSet)
-    .then(() => this.getEvents());
+
+  async saveCurrentSchedule() {
+    await this.restaurantsService.saveCurrentSchedule(
+      this.restaurant.id,
+      this.restaurant.scheduleSet.id,
+      this.currentSchedule,
+    );
+    this.currentSchedule = null;
+    return this.getEvents();
   }
-  saveNewSchedule(): void {
-    this.restaurantsService.saveNewSchedule(this.restaurant.id, this.restaurant.scheduleSet.id, this.newSchedule)
-    .then(() => this.newSchedule = null)
-    .then(() => this.restaurantsService.getScheduleSet(this.restaurant.id, this.restaurant.scheduleSetId))
-    .then(scheduleSet => this.restaurant.scheduleSet = scheduleSet)
-    .then(() => this.getEvents());
+
+  async saveNewSchedule() {
+    await this.restaurantsService.saveNewSchedule(
+      this.restaurant.id,
+      this.restaurant.scheduleSet.id,
+      this.newSchedule,
+    );
+    return this.getEvents();
   }
-  deleteCurrentSchedule(schedule): void {
-    this.restaurantsService.deleteCurrentSchedule(this.restaurant.id, this.restaurant.scheduleSet.id, schedule)
-    .then(() => this.restaurantsService.getScheduleSet(this.restaurant.id, this.restaurant.scheduleSetId))
-    .then(scheduleSet => this.restaurant.scheduleSet = scheduleSet)
-    .then(() => this.getEvents());
+
+  async deleteCurrentSchedule(schedule) {
+    await this.restaurantsService.deleteCurrentSchedule(
+      this.restaurant.id,
+      this.restaurant.scheduleSet.id,
+      schedule,
+    );
+    return this.getEvents();
   }
-  getEvents() {
+
+  async getEvents() {
+    this.restaurant.scheduleSet = await this.restaurantsService.getScheduleSet(
+      this.restaurant.id,
+      this.restaurant.scheduleSetId,
+    );
     this.events = this.restaurant.scheduleSet.schedules.map(
       (schedule) => ({
         start: addMinutes(addDays(startOfWeek(new Date()), days[schedule.day]), schedule.start),
@@ -159,10 +219,9 @@ export class AppComponent {
     this.restaurantsService.getRestaurants().then(
       (restaurants) => {
         this.restaurant = restaurants[0];
-        this.restaurantsService.getScheduleSet(this.restaurant.id, this.restaurant.scheduleSetId).then(
-          scheduleSet => this.restaurant.scheduleSet = scheduleSet,
-        )
-        .then(() => this.getEvents());
+        this.getEvents().then(
+          () => this.getOrderingTime(),
+        );
       }
     );
   }
