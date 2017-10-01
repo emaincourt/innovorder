@@ -9,8 +9,8 @@ export async function createSchedule(schedules, newSchedule) {
     .filter(
       schedule => schedule.day === newSchedule.day
       && (
-        schedule.end === newSchedule.start
-        || schedule.start === newSchedule.end
+        schedule.end <= newSchedule.start
+        || schedule.start >= newSchedule.end
         || schedule.end === newSchedule.end
         || schedule.start === newSchedule.start
       ),
