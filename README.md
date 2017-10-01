@@ -14,14 +14,14 @@ yarn && yarn add global @angular/cli
 
 If only a few of them are really in use, the following routes are available :
 
-> GET /restaurants
-> POST /restaurants
-> GET /restaurants/:id/schedule-sets
-> POST /restaurants/:id/schedule-sets
-> PATCH /restaurants/:id/schedule-sets/:id
-> DELETE /restaurants/:id/schedule-sets/:id
-> PATCH /restaurants/:id/schedule-sets/:id/schedules/:id
-> DELETE /restaurants/:id/schedule-sets/:id/schedules/:id
+- GET /restaurants
+- POST /restaurants
+- GET /restaurants/:id/schedule-sets
+- POST /restaurants/:id/schedule-sets
+- PATCH /restaurants/:id/schedule-sets/:id
+- DELETE /restaurants/:id/schedule-sets/:id
+- PATCH /restaurants/:id/schedule-sets/:id/schedules/:id
+- DELETE /restaurants/:id/schedule-sets/:id/schedules/:id
 
 You'll find the code in :
 - `/services` for the handlers
