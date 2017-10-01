@@ -24,6 +24,7 @@ server.route([
   updateScheduleSet,
   deleteScheduleSet,
   updateSchedule,
+  deleteSchedule,
 ]);
 
 server.start((err) => {
