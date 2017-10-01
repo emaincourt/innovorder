@@ -4,43 +4,14 @@ import {
   schedule as Schedule,
 } from '../../sequelize/models';
 
-export async function updateSchedule(schedule, interval) {
-  if (interval.from === schedule.start && interval.to === schedule.end) {
-    await schedule.destroy();
-    return {};
-  } else if (interval.from === schedule.start) {
-    await schedule.update({ end: interval.to });
-    return schedule.get();
-  } else if (interval.to === schedule.end) {
-    await schedule.update({ start: interval.from });
-    return schedule.get();
-  }
-  const schedules = await Schedule.bulkCreate([
-    {
-      scheduleSetId: schedule.scheduleSetId,
-      start: schedule.start,
-      end: interval.from,
-      day: schedule.day,
-    },
-    {
-      scheduleSetId: schedule.scheduleSetId,
-      start: interval.to,
-      end: schedule.end,
-      day: schedule.day,
-    },
-  ]);
-  await schedule.destroy();
-  return schedules.map(element => element.get());
-}
-
 export default {
   method: 'PATCH',
   path: '/restaurants/{restaurantId}/schedule-sets/{scheduleSetId}/schedules/{scheduleId}',
   config: {
     validate: {
       payload: Joi.object().keys({
-        from: Joi.number().less(Joi.ref('to')).required(),
-        to: Joi.number().greater(Joi.ref('from')).required(),
+        start: Joi.number().less(Joi.ref('end')).required(),
+        end: Joi.number().greater(Joi.ref('start')).required(),
       }),
     },
   },
@@ -51,7 +22,7 @@ export default {
       }
       const schedule = await Schedule.findById(params.scheduleId);
       return reply(
-        await updateSchedule(schedule, payload),
+        await schedule.update({ start: payload.start, end: payload.end }),
       );
     } catch (err) {
       return reply(Boom.wrap(err));
