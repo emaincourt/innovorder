@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Handler deletes a schedule according to its id 1`] = `undefined`;
