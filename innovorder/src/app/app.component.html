@@ -1,0 +1,92 @@
+<button class="add" (click)="createSchedule()">
+    <i class="material-icons">&#xE147;</i>
+</button>
+<section>
+    <mwl-calendar-week-view
+    [viewDate]="viewDate"
+    [events]="events"
+    locale="fr"
+    (eventClicked)="setCurrentSchedule($event.event)"
+    (dayClicked)="setCurrentSchedule($event.event)"
+    [refresh]="refresh"
+    >
+    </mwl-calendar-week-view>
+</section>
+<section class="overlay" *ngIf="currentSchedule">
+  <md-horizontal-stepper [linear]="isLinear">
+      <md-step>
+        <form>
+          <ng-template mdStepLabel>Début</ng-template>
+          <md-slider min="0" max="1440" step="15" value="{{currentSchedule.start}}" [(ngModel)]="currentSchedule.start" [ngModelOptions]="{standalone: true}"></md-slider>
+          <p>Début du shift : {{ (currentSchedule.start - currentSchedule.start % 60) / 60 }}:{{ currentSchedule.start % 60 }}</p>
+          <div>
+            <button md-button mdStepperNext>Suivant</button>
+            <button md-button (click)="currentSchedule = null">Abandonner</button>
+          </div>
+        </form>
+      </md-step>
+      <md-step>
+        <form>
+          <ng-template mdStepLabel>Fin</ng-template>
+          <md-slider min="0" max="1440" step="15" value="{{currentSchedule.end}}" [(ngModel)]="currentSchedule.end" [ngModelOptions]="{standalone: true}"></md-slider>
+          <p>Fin du shift : {{ (currentSchedule.end - currentSchedule.end % 60) / 60 }}:{{ currentSchedule.end % 60 }}</p>
+          <div>
+            <button md-button mdStepperPrevious>Précédent</button>
+            <button md-button mdStepperNext>Suivant</button>
+            <button md-button (click)="currentSchedule = null">Abandonner</button>
+          </div>
+        </form>
+      </md-step>
+      <md-step>
+        <ng-template mdStepLabel>Enregistrer</ng-template>
+        <div>
+            <button md-button (click)="saveCurrentSchedule()">Enregistrer</button>
+        </div>
+      </md-step>
+    </md-horizontal-stepper>
+</section>
+<section class="overlay" *ngIf="newSchedule">
+    <md-horizontal-stepper [linear]="isLinear">
+        <md-step>
+          <form>
+            <ng-template mdStepLabel>Jour</ng-template>
+            <md-select placeholder="Jour de la semaine" [(ngModel)]="newSchedule.day" [ngModelOptions]="{standalone: true}">
+                <md-option *ngFor="let day of days" [value]="day">{{ day }}</md-option>
+            </md-select>
+            <div>
+              <button md-button mdStepperNext>Suivant</button>
+              <button md-button (click)="newSchedule = null">Abandonner</button>
+            </div>
+          </form>
+        </md-step>
+        <md-step>
+          <form>
+            <ng-template mdStepLabel>Début</ng-template>
+            <md-slider min="0" max="1440" step="15" value="{{newSchedule.start}}" [(ngModel)]="newSchedule.start" [ngModelOptions]="{standalone: true}"></md-slider>
+            <p>Début du shift : {{ (newSchedule.start - newSchedule.start % 60) / 60 }}:{{ newSchedule.start % 60 }}</p>
+            <div>
+              <button md-button mdStepperNext>Suivant</button>
+              <button md-button (click)="newSchedule = null">Abandonner</button>
+            </div>
+          </form>
+        </md-step>
+        <md-step>
+          <form>
+            <ng-template mdStepLabel>Fin</ng-template>
+            <md-slider min="0" max="1440" step="15" value="{{newSchedule.end}}" [(ngModel)]="newSchedule.end" [ngModelOptions]="{standalone: true}"></md-slider>
+            <p>Fin du shift : {{ (newSchedule.end - newSchedule.end % 60) / 60 }}:{{ newSchedule.end % 60 }}</p>
+            <div>
+              <button md-button mdStepperPrevious>Précédent</button>
+              <button md-button mdStepperNext>Suivant</button>
+              <button md-button (click)="newSchedule = null">Abandonner</button>
+            </div>
+          </form>
+        </md-step>
+        <md-step>
+          <ng-template mdStepLabel>Enregistrer</ng-template>
+          <div>
+              <button md-button (click)="saveNewSchedule()">Enregistrer</button>
+          </div>
+        </md-step>
+      </md-horizontal-stepper>
+  </section>
