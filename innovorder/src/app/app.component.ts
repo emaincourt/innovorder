@@ -182,6 +182,7 @@ export class AppComponent {
       this.restaurant.scheduleSet.id,
       this.newSchedule,
     );
+    this.newSchedule = null;
     return this.getEvents();
   }
 

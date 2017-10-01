@@ -1,7 +1,17 @@
-<button class="add" (click)="createSchedule()">
-    <i class="material-icons">&#xE147;</i>
-</button>
-<p>{{ nextOrderingTime }}</p>
+<md-expansion-panel *ngIf="restaurant">
+  <md-expansion-panel-header>
+    <md-panel-title>
+      Prochaine commande : {{ nextOrderingTime }}
+    </md-panel-title>
+    <md-panel-description>
+      Modifiez les délais ici
+    </md-panel-description>
+  </md-expansion-panel-header>
+  <p>rushDelay : {{ restaurant.rushDelay }} min</p>
+  <md-slider min="0" max="40" step="5" value="{{restaurant.rushDelay}}" [(ngModel)]="restaurant.rushDelay" [ngModelOptions]="{standalone: true}"></md-slider>
+  <p>preparationDelay : {{ restaurant.preparationDelay }} min</p>
+  <md-slider min="0" max="40" step="5" value="{{restaurant.preparationDelay}}" [(ngModel)]="restaurant.preparationDelay" [ngModelOptions]="{standalone: true}"></md-slider>
+</md-expansion-panel>
 <section>
     <mwl-calendar-week-view
     [viewDate]="viewDate"
@@ -91,3 +101,6 @@
         </md-step>
       </md-horizontal-stepper>
   </section>
+  <button class="add" (click)="createSchedule()">
+      <i class="material-icons">&#xE147;</i>
+  </button>
