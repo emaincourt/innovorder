@@ -41,7 +41,7 @@ Definitely not my cup of tee...
 To start the Angular server, run the following command from the root of the project :
 
 ```bash
-cd innovorder && ng serve
+cd innovorder && yarn && ng serve
 ```
 
 It might take a while to bundle and optimize the assets of the project. You can then reach the [local url](http://localhost:4200/).

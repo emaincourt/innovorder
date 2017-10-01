@@ -119,6 +119,40 @@ describe('createSchedule', () => {
     expect(schedules[1].destroy).toHaveBeenCalled();
     expect(schedules[2].destroy).toHaveBeenCalled();
   });
+
+  it('does not merge uncontiguous items', async () => {
+    expect.assertions(3);
+    jest.mock('../../sequelize/models', () => ({
+      schedule: {
+        create: (params) => {
+          expect(params).toEqual({
+            day: 'MON',
+            start: 40,
+            end: 70,
+          });
+          return Promise.resolve({
+            day: 'MON',
+            start: 40,
+            end: 70,
+          });
+        },
+      },
+    }));
+    const createSchedule = require('../../services/service-restaurants/update-scheduleset').createSchedule;
+    const schedules = [
+      { day: 'MON', start: 15, end: 30, destroy: jest.fn() },
+      { day: 'MON', start: 80, end: 100, destroy: jest.fn() },
+    ];
+    const newSchedule = { day: 'MON', start: 40, end: 70 };
+    await expect(
+      createSchedule(schedules, newSchedule),
+    ).resolves.toEqual({
+      day: 'MON',
+      start: 40,
+      end: 70,
+    });
+    expect(schedules[0].destroy).not.toHaveBeenCalled();
+  });
 });
 
 describe('Handler', () => {
